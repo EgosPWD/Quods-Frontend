@@ -19,23 +19,20 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
   const [gameResults, setGameResults] = useState<{ round: number; blackCard: Card; whiteCard: Card }[]>([]);
   const [loadingRound, setLoadingRound] = useState(false);
   
-  // Total number of rounds
+  // TRondas
   const TOTAL_ROUNDS = 5;
-  // Number of white cards per round
+  // Numero de cartas blancas por ronda
   const WHITE_CARDS_PER_ROUND = 10;
 
-  // Initial setup - fetch black cards and the first round's white cards
   useEffect(() => {
     const fetchInitialCards = async () => {
       try {
         setLoading(true);
         
-        // Fetch black cards for all rounds
         const blackCardsData = await selectBlackCards();
         const randomBlackCards = getRandomCards(blackCardsData, TOTAL_ROUNDS);
         setBlackCards(randomBlackCards);
         
-        // Fetch white cards for the first round only
         await loadWhiteCardsForRound(1);
         
         setLoading(false);
@@ -49,10 +46,8 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
     fetchInitialCards();
   }, []);
 
-  // Monitor round changes and load cards for the next round if needed
   useEffect(() => {
     const prepareNextRound = async () => {
-      // If we're not already loading and cards for the current round aren't loaded yet
       if (!loadingRound && !roundWhiteCards[currentRound]) {
         await loadWhiteCardsForRound(currentRound);
       }
@@ -61,9 +56,7 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
     prepareNextRound();
   }, [currentRound, loadingRound, roundWhiteCards]);
 
-  // Function to load white cards for a specific round
   const loadWhiteCardsForRound = async (round: number) => {
-    // Don't load if we already have cards for this round
     if (roundWhiteCards[round] && roundWhiteCards[round].length > 0) {
       console.log(`Cards for round ${round} are already loaded`);
       return;
@@ -73,15 +66,12 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
       setLoadingRound(true);
       console.log(`Loading white cards for round ${round}...`);
       
-      // Fetch fresh white cards from the backend
       const whiteCardsData = await selectWhiteCards();
       
-      // Select random white cards for this round
       const roundCards = getRandomCards(whiteCardsData, WHITE_CARDS_PER_ROUND);
       
       console.log(`Loaded ${roundCards.length} white cards for round ${round}`);
       
-      // Update the state with the new cards
       setRoundWhiteCards(prev => ({
         ...prev,
         [round]: roundCards
@@ -95,18 +85,15 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
     }
   };
 
-  // Get random cards from the card array
   const getRandomCards = (cards: Card[], count: number): Card[] => {
     const shuffled = [...cards].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   };
 
-  // Get the current black card for this round
   const getCurrentBlackCard = (): Card | undefined => {
     return blackCards[currentRound - 1];
   };
 
-  // Get the white cards for the current round
   const getCurrentWhiteCards = (): Card[] => {
     if (roundWhiteCards[currentRound]) {
       return roundWhiteCards[currentRound];
@@ -114,21 +101,16 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
     return [];
   };
 
-  // Replace a selected card with a new one (only for first round)
   const replaceWhiteCard = async (selectedCard: Card) => {
     try {
-      // Fetch a new white card
       const newCard = await selectOneWhiteCard();
       
-      // Get current cards for this round
       const currentCards = roundWhiteCards[currentRound] || [];
       
-      // Replace the selected card with the new one
       const updatedCards = currentCards.map((card: Card) => 
         card.id === selectedCard.id ? newCard : card
       );
       
-      // Update cards for this round
       setRoundWhiteCards(prev => ({
         ...prev,
         [currentRound]: updatedCards
@@ -138,9 +120,7 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
     }
   };
 
-  // Handle white card selection
   const handleWhiteCardSelect = async (card: Card) => {
-    // Store the selected card for this round
     const updatedSelectedCards = {
       ...selectedWhiteCards,
       [currentRound]: card
@@ -148,7 +128,6 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
     
     setSelectedWhiteCards(updatedSelectedCards);
     
-    // Add the selection to results
     const currentBlackCard = getCurrentBlackCard();
     let updatedResults = [...gameResults];
     
@@ -160,27 +139,20 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
       setGameResults(updatedResults);
     }
 
-    // For the first round, replace the selected card but don't advance automatically
     if (currentRound === 1) {
       await replaceWhiteCard(card);
     } else {
-      // For other rounds, move to next round or end game
       if (currentRound < TOTAL_ROUNDS) {
-        // Pre-load cards for the next round
         const nextRound = currentRound + 1;
         
-        // Pre-load cards for the next round if not already loaded
         if (!roundWhiteCards[nextRound]) {
-          // Try to load cards for the next round in the background
           loadWhiteCardsForRound(nextRound);
         }
         
-        // Delay before moving to next round to show selection first
         setTimeout(() => {
           setCurrentRound(nextRound);
         }, 1000);
       } else {
-        // Game complete
         setTimeout(() => {
           onGameComplete(updatedResults);
         }, 1000);
@@ -188,7 +160,6 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
     }
   };
 
-  // Effect to log debug info when round changes
   useEffect(() => {
     console.log(`Round changed to ${currentRound}`);
     console.log(`Available roundWhiteCards keys: ${Object.keys(roundWhiteCards).join(', ')}`);
@@ -210,12 +181,11 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
   const currentWhiteCards = getCurrentWhiteCards();
   const selectedCard = selectedWhiteCards[currentRound];
   
-  // Debug information
+  // Deugging manual
   console.log(`Rendering round ${currentRound}`);
   console.log(`Black card:`, currentBlackCard);
   console.log(`White cards: ${currentWhiteCards.length} cards available for round ${currentRound}`);
 
-  // Show a loading indicator if we're loading cards for this round
   if (loadingRound && currentWhiteCards.length === 0) {
     return <div className="card-game-loading">Cargando cartas para la ronda {currentRound}...</div>;
   }
@@ -255,12 +225,10 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete }) => {
               const nextRound = currentRound + 1;
               console.log(`Button clicked: Moving to round ${nextRound}`);
               
-              // Pre-load cards for the next round if not already loaded
               if (!roundWhiteCards[nextRound]) {
                 loadWhiteCardsForRound(nextRound);
               }
               
-              // Move to next round
               setCurrentRound(nextRound);
             }}
             className="next-round-btn"

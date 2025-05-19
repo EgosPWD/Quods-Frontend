@@ -18,8 +18,6 @@ export default function GameRoom(): React.ReactNode {
 
     window.addEventListener("resize", handleResize);
     
-    // For demo purposes, start the game after a delay
-    // In a real app, this would happen when all players are ready
     const timer = setTimeout(() => {
       setGameState('playing');
     }, 3000);
@@ -36,11 +34,9 @@ export default function GameRoom(): React.ReactNode {
   };
 
   const handlePlayAgain = () => {
-    // Reset game state
     setGameState('waiting');
     setGameResults([]);
     
-    // For demo purposes, start a new game after a delay
     setTimeout(() => {
       setGameState('playing');
     }, 2000);
