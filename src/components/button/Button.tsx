@@ -1,14 +1,19 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
+import "./Button.css";
+
 type Props = {
   children: React.ReactNode;
   onClick?: () => void;
   variant?: string;
 };
 
-export default function Buttons({ children, onClick, variant }: Props) {
+export default function Buttons({ children, onClick, variant = "default" }: Props) {
   return (
-    <Button variant={variant} onClick={onClick}>
+    <Button 
+      className={`custom-button ${variant}`} 
+      onClick={onClick}
+    >
       {children}
     </Button>
   );

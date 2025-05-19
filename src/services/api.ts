@@ -1,3 +1,25 @@
+export interface UserResponse {
+  success: string;
+  message?: string;
+  error?: string;
+}
+
+export async function createUser(name: string): Promise<UserResponse> {
+  const res = await fetch("http://localhost:8000/users", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
+  });
+  
+  const data = await res.json();
+  
+  if (!res.ok) {
+    throw new Error(data.error || "Error al crear usuario");
+  }
+  
+  return data;
+}
+
 export async function createRoom(): Promise<string> {
   const res = await fetch("http://localhost:8000/room/create");
   if (!res.ok) throw new Error("No se pudo creaar la sala");

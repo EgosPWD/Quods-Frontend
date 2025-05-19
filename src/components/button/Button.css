@@ -1,0 +1,55 @@
+.custom-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  gap: 10px;
+}
+
+.custom-button.default {
+  background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+  color: white;
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+.custom-button.play {
+  background-color: #111;
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.custom-button:active {
+  transform: translateY(1px);
+}
+
+/* Add responsive styles */
+@media (max-width: 768px) {
+  .custom-button {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    gap: 5px;
+  }
+  
+  .custom-button svg {
+    width: 18px;
+    height: 18px;
+  }
+}
