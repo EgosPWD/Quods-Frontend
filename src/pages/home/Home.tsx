@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Buttons from "../../components/button/Button";
-import { createRoom, createUser } from "../../services/api";
+import { createRoom, createUser, generateCards } from "../../services/api";
 import "./Home.css";
 
 export default function Home(): React.ReactNode {
@@ -11,6 +11,8 @@ export default function Home(): React.ReactNode {
   const [fadeIn, setFadeIn] = useState(false);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [howToPlayStep, setHowToPlayStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [customPrompt, setCustomPrompt] = useState("");
 
   useEffect(() => {
     // Aplicar efecto de entrada después de un pequeño delay
@@ -22,18 +24,35 @@ export default function Home(): React.ReactNode {
 
   const handleStartGame = async (): Promise<void> => {
     try {
-      // Validar que haya ingresado un apodo
       if (!nickname.trim()) {
         alert("Por favor ingresa un apodo");
         return;
       }
-
+      
+      if (!customPrompt.trim()) {
+        alert("Por favor ingresa un tema o prompt para las cartas");
+        return;
+      }
+      
+      setIsLoading(true);
+      
       await createUser(nickname);
       const roomId = await createRoom();
+      
+      // Generate cards for the room with custom prompt
+      const promptText = customPrompt.trim();
+      console.log(`Generando cartas para la sala ${roomId} con tema: ${promptText}`);
+      await generateCards({ 
+        tema: promptText, 
+        room_id: roomId,
+        prompt: promptText
+      });
+      
       navigate(`/room/${roomId}`);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Error al crear sala o registrar usuario");
-      console.error(err);
+      console.error("Error starting game:", err);
+      setIsLoading(false);
     }
   };
 
@@ -139,17 +158,45 @@ export default function Home(): React.ReactNode {
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
             />
+            
+            <div className="custom-prompt" style={{ marginTop: '15px' }}>
+              <h3 style={{ fontSize: '14px', marginBottom: '8px' }}>ELIGE EL TEMA DE LAS CARTAS</h3>
+              <textarea
+                className="prompt-input"
+                placeholder="Ingresa el tema o instrucciones para generar cartas (por ejemplo: 'historia', 'deportes', 'ciencia ficción', etc.)..."
+                value={customPrompt}
+                onChange={(e) => setCustomPrompt(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  backgroundColor: '#f5f5f5',
+                  border: '1px solid #ddd',
+                  minHeight: '80px',
+                  resize: 'vertical',
+                  fontFamily: 'inherit'
+                }}
+                required
+              />
+            </div>
           </div>
 
           <div className="buttonContainer">
             <Buttons
               variant="play"
               onClick={handleStartGame}
+              disabled={isLoading}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 5V19L19 12L8 5Z" fill="white" />
-              </svg>
-              INICIAR JUEGO
+              {isLoading ? (
+                "CREANDO JUEGO..."
+              ) : (
+                <>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 5V19L19 12L8 5Z" fill="white" />
+                  </svg>
+                  INICIAR JUEGO
+                </>
+              )}
             </Buttons>
           </div>
         </div>

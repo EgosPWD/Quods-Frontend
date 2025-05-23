@@ -31,10 +31,11 @@ export async function createRoom(): Promise<string> {
 export interface Card {
   id: number;
   text: string;
+  room_id: string; // Required field as per updated API
 }
 
-export async function selectBlackCards(): Promise<Card[]> {
-  const res = await fetch("http://localhost:8000/black_cards-select");
+export async function selectBlackCards(roomId: string): Promise<Card[]> {
+  const res = await fetch(`http://localhost:8000/black_cards-select?room_id=${roomId}`);
   if (!res.ok) throw new Error("No se pudo seleccionar las cartas negras");
   const data = await res.json();
 
@@ -45,8 +46,8 @@ export async function selectBlackCards(): Promise<Card[]> {
   return data.black_cards;
 }
 
-export async function selectWhiteCards(): Promise<Card[]> {
-  const res = await fetch("http://localhost:8000/white_cards-select");
+export async function selectWhiteCards(roomId: string): Promise<Card[]> {
+  const res = await fetch(`http://localhost:8000/white_cards-select?room_id=${roomId}`);
   if (!res.ok) throw new Error("No se pudo seleccionar las cartas blancas");
   const data = await res.json();
 
@@ -57,8 +58,8 @@ export async function selectWhiteCards(): Promise<Card[]> {
   return data.white_cards;
 }
 
-export async function selectOneWhiteCard(): Promise<Card> {
-  const res = await fetch("http://localhost:8000/white_cards-one");
+export async function selectOneWhiteCard(roomId: string): Promise<Card> {
+  const res = await fetch(`http://localhost:8000/white_cards-one?room_id=${roomId}`);
   if (!res.ok) throw new Error("No se pudo seleccionar la carta blanca");
   const data = await res.json();
 
@@ -67,4 +68,98 @@ export async function selectOneWhiteCard(): Promise<Card> {
   }
 
   return data.white_cards;
-} 
+}
+
+interface GenerateCardsRequest {
+  tema: string;
+  room_id: string;
+  prompt: string;
+}
+
+interface GenerateCardsResponse {
+  success: string;
+  message?: string;
+  error?: string;
+}
+
+export async function generateCards(request: GenerateCardsRequest): Promise<GenerateCardsResponse> {
+  const res = await fetch("http://localhost:8000/generar-cartas", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Error al generar las cartas");
+  }
+
+  return data;
+}
+
+interface VerificarRespuestaRequest {
+  white_card_id: number;
+  black_card_id: number;
+  room_id: string;
+}
+
+interface VerificarRespuestaResponse {
+  success: string;
+  es_correcta: boolean;
+  white_card_id: number;
+  black_card_id: number;
+  room_id: string;
+  error?: string;
+}
+
+export async function verificarRespuesta(request: VerificarRespuestaRequest): Promise<VerificarRespuestaResponse> {
+  const res = await fetch("http://localhost:8000/verificar-respuesta", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Error al verificar la respuesta");
+  }
+
+  return data;
+}
+
+interface CorrectCardsRequest {
+  black_card_id: number;
+  room_id: string;
+}
+
+interface CorrectCard extends Card {
+  is_correct: boolean;
+  black_card_id: number;
+}
+
+interface CorrectCardsResponse {
+  success: string;
+  correct_cards: CorrectCard[];
+  black_card_id: number;
+  room_id: string;
+  count: number;
+  error?: string;
+}
+
+export async function getCorrectCards(request: CorrectCardsRequest): Promise<CorrectCardsResponse> {
+  const res = await fetch("http://localhost:8000/correct-cards", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Error al obtener las tarjetas correctas");
+  }
+
+  return data;
+}
