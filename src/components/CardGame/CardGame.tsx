@@ -14,7 +14,7 @@ import './CardGame.css';
 
 interface CardGameProps {
   onGameComplete: (selectedCards: { round: number; blackCard: Card; whiteCard: Card; isCorrect?: boolean }[]) => void;
-  roomId: string; // Required - used to fetch cards associated with this room
+  roomId: string; 
 }
 
 const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
@@ -30,7 +30,7 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
   
   // TRondas
   const TOTAL_ROUNDS = 5;
-  // Numero de cartas blancas por ronda
+  //Numero de cartas blancas por ronda
   const WHITE_CARDS_PER_ROUND = 10;
 
   useEffect(() => {
@@ -159,14 +159,12 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
       try {
         setVerifyingResponse(true);
         
-        // Verificar si la respuesta es correcta
         const verificationResult = await verificarRespuesta({
           white_card_id: card.id,
           black_card_id: currentBlackCard.id,
           room_id: roomId
         });
         
-        // Guardar el resultado con información de si es correcta o no
         updatedResults = [
           ...gameResults.filter(result => result.round !== currentRound),
           { 
@@ -178,21 +176,16 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
         ];
         setGameResults(updatedResults);
         
-        // Si no es correcta, obtener las respuestas correctas
         if (!verificationResult.es_correcta) {
-          // Obtenemos las cartas correctas para referencia pero no necesitamos
-          // almacenarlas actualmente, ya que solo estamos verificando si la respuesta es correcta
           await getCorrectCards({
             black_card_id: currentBlackCard.id,
             room_id: roomId
           });
           
-          // En una versión futura, podríamos mostrar las respuestas correctas al usuario
           console.log(`La respuesta para la carta negra ${currentBlackCard.id} es incorrecta`);
         }
       } catch (err) {
         console.error("Error verificando respuesta:", err);
-        // Si hay error de verificación, continuar sin la verificación
         updatedResults = [
           ...gameResults.filter(result => result.round !== currentRound),
           { round: currentRound, blackCard: currentBlackCard, whiteCard: card }
@@ -289,8 +282,8 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
               : '#721c24'
           }}>
             {gameResults.find(result => result.round === currentRound)?.isCorrect 
-              ? '¡Respuesta correcta! 🎉' 
-              : '❌ Respuesta incorrecta. Continúa para ver la siguiente pregunta.'}
+              ? '¡Respuesta correcta!' 
+              : 'Respuesta incorrecta. Continúa para ver la siguiente pregunta.'}
           </div>
         )}
       </div>

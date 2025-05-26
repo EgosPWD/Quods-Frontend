@@ -15,7 +15,7 @@ export default function Home(): React.ReactNode {
   const [customPrompt, setCustomPrompt] = useState("");
 
   useEffect(() => {
-    // Aplicar efecto de entrada después de un pequeño delay
+    // delay de entrda solo es un efecto
     const timer = setTimeout(() => {
       setFadeIn(true);
     }, 100);

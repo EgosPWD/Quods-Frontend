@@ -10,7 +10,7 @@ export default function GameRoom(): React.ReactNode {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   const [gameState, setGameState] = useState<'waiting' | 'playing' | 'completed'>('waiting');
   const [gameResults, setGameResults] = useState<{ round: number; blackCard: Card; whiteCard: Card; isCorrect?: boolean }[]>([]);
-  const [tema, setTema] = useState<string>(""); // Almacena el tema de las cartas
+  const [tema, setTema] = useState<string>(""); 
 
   useEffect(() => {
     const handleResize = () => {
@@ -19,7 +19,6 @@ export default function GameRoom(): React.ReactNode {
 
     window.addEventListener("resize", handleResize);
 
-    // Validate that roomId is available before starting the game
     if (roomId) {
       const timer = setTimeout(() => {
         setGameState('playing');
@@ -30,7 +29,6 @@ export default function GameRoom(): React.ReactNode {
         clearTimeout(timer);
       };
     } else {
-      // If roomId is not available, redirect to home
       navigate('/');
       return () => {
         window.removeEventListener("resize", handleResize);
@@ -42,10 +40,8 @@ export default function GameRoom(): React.ReactNode {
     setGameResults(results);
     setGameState('completed');
     
-    // Intentamos extraer el tema de las cartas si está disponible en room_id
     if (results.length > 0 && results[0].blackCard.room_id) {
       const cardRoomId = results[0].blackCard.room_id;
-      // Si el formato incluye el tema (ej: "historia-abc-123"), podemos extraerlo
       const themeParts = cardRoomId.split('-');
       if (themeParts.length > 0) {
         setTema(themeParts[0].charAt(0).toUpperCase() + themeParts[0].slice(1));

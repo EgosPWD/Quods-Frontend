@@ -31,7 +31,7 @@ export async function createRoom(): Promise<string> {
 export interface Card {
   id: number;
   text: string;
-  room_id: string; // Required field as per updated API
+  room_id: string;
 }
 
 export async function selectBlackCards(roomId: string): Promise<Card[]> {
