@@ -1,0 +1,62 @@
+/* PWA-specific styles */
+@media (display-mode: standalone) {
+  /* Estilos cuando la app se ejecuta como PWA */
+  body {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Ocultar barra de direcciones en modo standalone */
+  .app-header {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 768px) {
+  /* Optimizaciones táctiles */
+  button, .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Mejores espacios para touch */
+  .card {
+    margin: 8px;
+  }
+  
+  /* Prevenir zoom en inputs */
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+/* Animaciones PWA */
+.pwa-update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #4CAF50;
+  color: white;
+  padding: 12px;
+  text-align: center;
+  z-index: 9999;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+
+.pwa-update-banner.show {
+  transform: translateY(0);
+}
+
+.pwa-update-banner button {
+  background: white;
+  color: #4CAF50;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-left: 10px;
+  cursor: pointer;
+}
