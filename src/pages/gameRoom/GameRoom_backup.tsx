@@ -65,6 +65,7 @@ export default function GameRoom(): React.ReactNode {
   return (
     <div className="game-room-container">
       <header className="game-header">
+        <h1 className={isSmallScreen ? "h4" : "h3"}>Sala de juego</h1>
         {tema && (
           <div className="game-theme" style={{ 
             fontSize: isSmallScreen ? '14px' : '16px',
@@ -165,7 +166,7 @@ export default function GameRoom(): React.ReactNode {
                 </button>
               </div>
             </div>
-            <CardGame onGameComplete={handleGameComplete} roomId={roomId} gameState={gameState} />
+            <CardGame onGameComplete={handleGameComplete} roomId={roomId} />
           </div>
         )}
 

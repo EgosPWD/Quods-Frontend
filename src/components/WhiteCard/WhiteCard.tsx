@@ -6,17 +6,19 @@ interface WhiteCardProps {
   card: Card;
   selected: boolean;
   disabled: boolean;
+  disappearing?: boolean;
   onSelect: () => void;
 }
 
-const WhiteCard: React.FC<WhiteCardProps> = ({ card, selected, disabled, onSelect }) => {
+const WhiteCard: React.FC<WhiteCardProps> = ({ card, selected, disabled, disappearing = false, onSelect }) => {
+  
   const handleClick = () => {
-    if (!disabled) {
+    if (!disabled && !disappearing) {
       onSelect();
     }
   };
 
-  const cardClassName = `white-card ${selected ? 'selected' : ''} ${disabled && !selected ? 'disabled' : ''}`;
+  const cardClassName = `white-card ${selected ? 'selected' : ''} ${disabled && !selected ? 'disabled' : ''} ${disappearing ? 'disappearing' : ''}`;
 
   return (
     <div className={cardClassName} onClick={handleClick}>

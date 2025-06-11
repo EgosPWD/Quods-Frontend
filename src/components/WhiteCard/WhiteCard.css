@@ -1,8 +1,11 @@
+/* Transición suave para el reordenamiento */
 .white-card {
   background-color: white;
   color: #111;
   border-radius: 8px;
-  width: 180px;
+  min-width: 180px;
+  max-width: 220px;
+  width: 200px;
   height: 240px;
   padding: 1rem;
   display: flex;
@@ -14,6 +17,7 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .white-card:hover:not(.disabled) {
@@ -48,4 +52,59 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Animación para cartas que desaparecen */
+.white-card.disappearing {
+  animation: fadeOut 0.4s ease-out forwards !important;
+  pointer-events: none;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.9) translateY(-10px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7) translateY(-30px);
+  }
+}
+
+/* Responsive styles para WhiteCard */
+@media (max-width: 768px) {
+  .white-card {
+    min-width: 160px;
+    max-width: 180px;
+    width: 170px;
+    height: 220px;
+    padding: 0.8rem;
+  }
+  
+  .white-card-content {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .white-card {
+    min-width: 140px;
+    max-width: 160px;
+    width: 150px;
+    height: 200px;
+    padding: 0.7rem;
+  }
+  
+  .white-card-content {
+    font-size: 0.85rem;
+  }
+  
+  .selected-indicator {
+    top: 5px;
+    right: 5px;
+  }
 }

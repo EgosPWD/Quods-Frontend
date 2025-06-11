@@ -1,22 +1,52 @@
 .card-game-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 2rem;
+  gap: 1rem;
+  padding: 0.5rem;
   min-height: 80vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  align-items: center;
 }
 
 .black-card-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 800px;
 }
 
 .white-cards-section {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 1rem;
-  justify-content: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 10px 0;
+  scroll-behavior: smooth;
+  transition: all 0.3s ease-in-out;
+}
+
+.white-cards-section::-webkit-scrollbar {
+  height: 8px;
+}
+
+.white-cards-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.white-cards-section::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.white-cards-section::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
 .card-game-loading {
@@ -40,12 +70,15 @@
 .round-info {
   margin-bottom: 1.5rem;
   text-align: center;
+  width: 100%;
+  max-width: 800px;
 }
 
 .round-instructions {
   font-size: 1.2rem;
   color: #555;
   font-style: italic;
+  text-align: center;
 }
 
 .next-round-button {
@@ -67,4 +100,74 @@
 
 .next-round-btn:hover {
   background-color: #333;
+}
+
+/* Responsive styles for CardGame */
+@media (max-width: 768px) {
+  .card-game-container {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  
+  .black-card-section {
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+  }
+  
+  .white-cards-section {
+    gap: 0.8rem;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+  
+  .round-info {
+    margin-bottom: 1rem;
+    max-width: 100%;
+  }
+  
+  .round-instructions {
+    font-size: 1rem;
+  }
+  
+  .room-code-floating {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    padding: 6px 10px !important;
+  }
+  
+  .room-code-compact {
+    font-size: 12px !important;
+    gap: 6px !important;
+  }
+  
+  .code-value {
+    padding: 2px 6px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-game-container {
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+  
+  .white-cards-section {
+    gap: 0.6rem;
+    padding: 5px 0;
+  }
+  
+  .round-instructions {
+    font-size: 0.9rem;
+  }
+  
+  .room-code-floating {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin-bottom: 10px;
+    align-self: flex-start;
+  }
 }

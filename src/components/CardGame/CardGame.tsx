@@ -15,9 +15,10 @@ import './CardGame.css';
 interface CardGameProps {
   onGameComplete: (selectedCards: { round: number; blackCard: Card; whiteCard: Card; isCorrect?: boolean }[]) => void;
   roomId: string; 
+  gameState?: string; // Agregar prop para detectar reinicio
 }
 
-const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
+const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId, gameState }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentRound, setCurrentRound] = useState(1);
@@ -27,6 +28,8 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
   const [gameResults, setGameResults] = useState<{ round: number; blackCard: Card; whiteCard: Card; isCorrect?: boolean }[]>([]);
   const [loadingRound, setLoadingRound] = useState(false);
   const [verifyingResponse, setVerifyingResponse] = useState(false);
+  const [disappearingCards, setDisappearingCards] = useState<Set<string>>(new Set());
+  const [usedCards, setUsedCards] = useState<Set<string>>(new Set()); // Cartas usadas en todo el juego
   
   // TRondas
   const TOTAL_ROUNDS = 5;
@@ -68,7 +71,7 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
     };
 
     prepareNextRound();
-  }, [currentRound, loadingRound, roundWhiteCards]);
+  }, [currentRound, loadingRound, roundWhiteCards, usedCards]);
 
   const loadWhiteCardsForRound = async (round: number) => {
     if (roundWhiteCards[round] && roundWhiteCards[round].length > 0) {
@@ -86,9 +89,16 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
         throw new Error("No se encontraron cartas blancas para esta sala. Asegúrate de que las cartas han sido generadas.");
       }
       
-      const roundCards = getRandomCards(whiteCardsData, WHITE_CARDS_PER_ROUND);
+      // Filtrar cartas que ya han sido usadas antes de seleccionar cartas aleatorias
+      const availableCards = whiteCardsData.filter(card => 
+        !usedCards.has(card.id.toString())
+      );
       
-      console.log(`Loaded ${roundCards.length} white cards for round ${round}`);
+      if (availableCards.length < WHITE_CARDS_PER_ROUND) {
+        console.warn(`Solo quedan ${availableCards.length} cartas disponibles para la ronda ${round}`);
+      }
+      
+      const roundCards = getRandomCards(availableCards, Math.min(WHITE_CARDS_PER_ROUND, availableCards.length));
       
       setRoundWhiteCards(prev => ({
         ...prev,
@@ -145,12 +155,36 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
   };
 
   const handleWhiteCardSelect = async (card: Card) => {
+    // Agregar la carta a las cartas usadas globalmente
+    setUsedCards(prev => new Set(prev).add(card.id.toString()));
+    
+    // Marcar la carta como desapareciendo
+    setDisappearingCards(prev => new Set(prev).add(card.id.toString()));
+    
     const updatedSelectedCards = {
       ...selectedWhiteCards,
       [currentRound]: card
     };
     
     setSelectedWhiteCards(updatedSelectedCards);
+
+    // Después de un breve delay, remover la carta completamente
+    setTimeout(() => {
+      const currentCards = roundWhiteCards[currentRound] || [];
+      const updatedCards = currentCards.filter(c => c.id !== card.id);
+      
+      setRoundWhiteCards(prev => ({
+        ...prev,
+        [currentRound]: updatedCards
+      }));
+      
+      // Limpiar el estado de desapareciendo
+      setDisappearingCards(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(card.id.toString());
+        return newSet;
+      });
+    }, 400);
     
     const currentBlackCard = getCurrentBlackCard();
     let updatedResults = [...gameResults];
@@ -226,6 +260,24 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
     });
   }, [currentRound, roundWhiteCards]);
 
+  useEffect(() => {
+    // Limpiar cartas desapareciendo cuando cambie de ronda
+    setDisappearingCards(new Set());
+  }, [currentRound]);
+
+  // Resetear estado cuando el juego se reinicia
+  useEffect(() => {
+    if (gameState === 'playing' && (usedCards.size > 0 || currentRound > 1)) {
+      console.log('Reiniciando estado del juego...');
+      setCurrentRound(1);
+      setUsedCards(new Set());
+      setDisappearingCards(new Set());
+      setSelectedWhiteCards({});
+      setGameResults([]);
+      setRoundWhiteCards({});
+    }
+  }, [gameState]);
+
   if (loading) {
     return <div className="card-game-loading">Cargando cartas...</div>;
   }
@@ -295,6 +347,7 @@ const CardGame: React.FC<CardGameProps> = ({ onGameComplete, roomId }) => {
             card={card} 
             selected={selectedCard?.id === card.id}
             disabled={!!selectedCard && selectedCard.id !== card.id} 
+            disappearing={disappearingCards.has(card.id.toString())}
             onSelect={() => handleWhiteCardSelect(card)} 
           />
         ))}

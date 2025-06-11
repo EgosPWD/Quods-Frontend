@@ -13,6 +13,8 @@ export default function Home(): React.ReactNode {
   const [howToPlayStep, setHowToPlayStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [customPrompt, setCustomPrompt] = useState("");
+  const [gameMode, setGameMode] = useState<'create' | 'join'>('create');
+  const [roomCode, setRoomCode] = useState("");
 
   useEffect(() => {
     // delay de entrda solo es un efecto
@@ -52,6 +54,31 @@ export default function Home(): React.ReactNode {
     } catch (err) {
       alert(err instanceof Error ? err.message : "Error al crear sala o registrar usuario");
       console.error("Error starting game:", err);
+      setIsLoading(false);
+    }
+  };
+
+  const handleJoinRoom = async (): Promise<void> => {
+    try {
+      if (!nickname.trim()) {
+        alert("Por favor ingresa un apodo");
+        return;
+      }
+      
+      if (!roomCode.trim()) {
+        alert("Por favor ingresa el código de la sala");
+        return;
+      }
+      
+      setIsLoading(true);
+      
+      await createUser(nickname);
+      
+      // Navigate to the room directly
+      navigate(`/room/${roomCode.trim()}`);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error al unirse a la sala");
+      console.error("Error joining room:", err);
       setIsLoading(false);
     }
   };
@@ -159,42 +186,123 @@ export default function Home(): React.ReactNode {
               onChange={(e) => setNickname(e.target.value)}
             />
             
-            <div className="custom-prompt" style={{ marginTop: '15px' }}>
-              <h3 style={{ fontSize: '14px', marginBottom: '8px' }}>ELIGE EL TEMA DE LAS CARTAS</h3>
-              <textarea
-                className="prompt-input"
-                placeholder="Ingresa el tema o instrucciones para generar cartas (por ejemplo: 'historia', 'deportes', 'ciencia ficción', etc.)..."
-                value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  borderRadius: '4px',
-                  backgroundColor: '#f5f5f5',
-                  border: '1px solid #ddd',
-                  minHeight: '80px',
-                  resize: 'vertical',
-                  fontFamily: 'inherit'
-                }}
-                required
-              />
+            {/* Selector de modo de juego */}
+            <div className="game-mode-selector" style={{ margin: '20px 0' }}>
+              <div className="mode-tabs" style={{ 
+                display: 'flex', 
+                borderRadius: '8px', 
+                overflow: 'hidden',
+                border: '1px solid #ddd',
+                backgroundColor: '#f5f5f5'
+              }}>
+                <button
+                  className={`mode-tab ${gameMode === 'create' ? 'active' : ''}`}
+                  onClick={() => setGameMode('create')}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    border: 'none',
+                    backgroundColor: gameMode === 'create' ? '#4ECDC4' : 'transparent',
+                    color: gameMode === 'create' ? 'white' : '#666',
+                    fontWeight: gameMode === 'create' ? 'bold' : 'normal',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Crear Nueva Sala
+                </button>
+                <button
+                  className={`mode-tab ${gameMode === 'join' ? 'active' : ''}`}
+                  onClick={() => setGameMode('join')}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    border: 'none',
+                    backgroundColor: gameMode === 'join' ? '#4ECDC4' : 'transparent',
+                    color: gameMode === 'join' ? 'white' : '#666',
+                    fontWeight: gameMode === 'join' ? 'bold' : 'normal',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Unirse a Sala
+                </button>
+              </div>
             </div>
+            
+            {gameMode === 'create' ? (
+              <div className="custom-prompt" style={{ marginTop: '15px' }}>
+                <h3 style={{ fontSize: '14px', marginBottom: '8px' }}>ELIGE EL TEMA DE LAS CARTAS</h3>
+                <textarea
+                  className="prompt-input"
+                  placeholder="Ingresa el tema o instrucciones para generar cartas (por ejemplo: 'historia', 'deportes', 'ciencia ficción', etc.)..."
+                  value={customPrompt}
+                  onChange={(e) => setCustomPrompt(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '4px',
+                    backgroundColor: '#f5f5f5',
+                    border: '1px solid #ddd',
+                    minHeight: '80px',
+                    resize: 'vertical',
+                    fontFamily: 'inherit'
+                  }}
+                  required
+                />
+              </div>
+            ) : (
+              <div className="join-room" style={{ marginTop: '15px' }}>
+                <h3 style={{ fontSize: '14px', marginBottom: '8px' }}>CÓDIGO DE SALA</h3>
+                <input
+                  type="text"
+                  className="room-code-input"
+                  placeholder="Pega aquí el código de la sala..."
+                  value={roomCode}
+                  onChange={(e) => setRoomCode(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '4px',
+                    backgroundColor: '#f5f5f5',
+                    border: '1px solid #ddd',
+                    fontSize: '16px',
+                    fontFamily: 'monospace',
+                    letterSpacing: '1px',
+                    textAlign: 'center'
+                  }}
+                  required
+                />
+                <p style={{ 
+                  fontSize: '12px', 
+                  color: '#666', 
+                  marginTop: '8px',
+                  textAlign: 'center' 
+                }}>
+                  💡 Solicita el código de sala al creador del juego
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="buttonContainer">
             <Buttons
               variant="play"
-              onClick={handleStartGame}
+              onClick={gameMode === 'create' ? handleStartGame : handleJoinRoom}
               disabled={isLoading}
             >
               {isLoading ? (
-                "CREANDO JUEGO..."
+                gameMode === 'create' ? "CREANDO JUEGO..." : "UNIÉNDOSE..."
               ) : (
                 <>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 5V19L19 12L8 5Z" fill="white" />
+                    {gameMode === 'create' ? (
+                      <path d="M8 5V19L19 12L8 5Z" fill="white" />
+                    ) : (
+                      <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="white" />
+                    )}
                   </svg>
-                  INICIAR JUEGO
+                  {gameMode === 'create' ? 'INICIAR JUEGO' : 'UNIRSE A SALA'}
                 </>
               )}
             </Buttons>
