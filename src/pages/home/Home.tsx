@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Buttons from "../../components/button/Button";
-import { createRoom, createUser, generateCards } from "../../services/api";
+import { createRoom, generateCards } from "../../services/api";
 import "./Home.css";
 
 export default function Home(): React.ReactNode {
   const navigate = useNavigate();
-  const [nickname, setNickname] = useState("");
-  const [character, setCharacter] = useState(1);
   const [fadeIn, setFadeIn] = useState(false);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [howToPlayStep, setHowToPlayStep] = useState(0);
@@ -26,11 +24,6 @@ export default function Home(): React.ReactNode {
 
   const handleStartGame = async (): Promise<void> => {
     try {
-      if (!nickname.trim()) {
-        alert("Por favor ingresa un apodo");
-        return;
-      }
-      
       if (!customPrompt.trim()) {
         alert("Por favor ingresa un tema o prompt para las cartas");
         return;
@@ -38,7 +31,6 @@ export default function Home(): React.ReactNode {
       
       setIsLoading(true);
       
-      await createUser(nickname);
       const roomId = await createRoom();
       
       // Generate cards for the room with custom prompt
@@ -52,7 +44,7 @@ export default function Home(): React.ReactNode {
       
       navigate(`/room/${roomId}`);
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error al crear sala o registrar usuario");
+      alert(err instanceof Error ? err.message : "Error al crear sala");
       console.error("Error starting game:", err);
       setIsLoading(false);
     }
@@ -60,19 +52,12 @@ export default function Home(): React.ReactNode {
 
   const handleJoinRoom = async (): Promise<void> => {
     try {
-      if (!nickname.trim()) {
-        alert("Por favor ingresa un apodo");
-        return;
-      }
-      
       if (!roomCode.trim()) {
         alert("Por favor ingresa el código de la sala");
         return;
       }
       
       setIsLoading(true);
-      
-      await createUser(nickname);
       
       // Navigate to the room directly
       navigate(`/room/${roomCode.trim()}`);
@@ -83,14 +68,10 @@ export default function Home(): React.ReactNode {
     }
   };
 
-  const regenerateCharacter = () => {
-    setCharacter(prev => (prev % 4) + 1);
-  };
-
   const howToPlayContent = [
     {
       title: "Crea una sala",
-      description: "Elige tu personaje, ingresa un apodo y comienza el juego",
+      description: "Ingresa un tema para las cartas y comienza el juego",
       icon: (
         <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z" fill="#4ECDC4" />
@@ -146,45 +127,13 @@ export default function Home(): React.ReactNode {
 
           <div className="game-logo">
             <h1 className="title">Cartas</h1>
-            <p className="subtitle">Un juego de completar frases con humor</p>
+            <p className="subtitle">Un juego para aprender</p>
           </div>
 
-          <div className="login-options">
-            <div 
-              className={`login-option ${activeTabIndex === 0 ? 'active' : ''}`} 
-              onClick={() => setActiveTabIndex(0)}
-            >
-              Jugar Anónimo
-            </div>
-            <div 
-              className={`login-option ${activeTabIndex === 1 ? 'active' : ''}`}
-              onClick={() => setActiveTabIndex(1)}
-            >
-              Con Cuenta
-            </div>
-          </div>
+         
 
           <div className="character-selection">
-            <h2>ELIGE UN PERSONAJE<br />Y UN APODO</h2>
-
-            <div className="character-container">
-              <div className="character">
-                <div className="logo">{character === 1 ? 'C' : character === 2 ? 'Q' : character === 3 ? 'H' : 'J'}</div>
-              </div>
-              <div className="character-refresh" onClick={regenerateCharacter}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4C7.58 4 4.01 7.58 4.01 12C4.01 16.42 7.58 20 12 20C15.73 20 18.84 17.45 19.73 14H17.65C16.83 16.33 14.61 18 12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C13.66 6 15.14 6.69 16.22 7.78L13 11H20V4L17.65 6.35Z" fill="#111" />
-                </svg>
-              </div>
-            </div>
-
-            <input
-              type="text"
-              className="nickname-input"
-              placeholder="Ingresa tu apodo..."
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-            />
+            <h2>CREAR O UNIRSE A UNA SALA</h2>
             
             {/* Selector de modo de juego */}
             <div className="game-mode-selector" style={{ margin: '20px 0' }}>
