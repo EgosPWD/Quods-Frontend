@@ -105,58 +105,27 @@
 /* Responsive styles for CardGame */
 @media (max-width: 768px) {
   .card-game-container {
-    padding: 1rem;
-    gap: 1.5rem;
+    padding: 0.5rem;
+    gap: 1rem;
+    min-height: 75vh;
   }
   
   .black-card-section {
-    margin-bottom: 1.5rem;
-    max-width: 100%;
-  }
-  
-  .white-cards-section {
-    gap: 0.8rem;
-    max-width: 100%;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-  }
-  
-  .round-info {
     margin-bottom: 1rem;
     max-width: 100%;
   }
   
-  .round-instructions {
-    font-size: 1rem;
-  }
-  
-  .room-code-floating {
-    position: fixed !important;
-    top: 10px !important;
-    left: 10px !important;
-    padding: 6px 10px !important;
-  }
-  
-  .room-code-compact {
-    font-size: 12px !important;
-    gap: 6px !important;
-  }
-  
-  .code-value {
-    padding: 2px 6px !important;
-    font-size: 11px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .card-game-container {
-    padding: 0.5rem;
-    gap: 1rem;
-  }
-  
   .white-cards-section {
     gap: 0.6rem;
-    padding: 5px 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding: 8px 0;
+  }
+  
+  .round-info {
+    margin-bottom: 0.8rem;
+    max-width: 100%;
   }
   
   .round-instructions {
@@ -167,7 +136,50 @@
     position: relative !important;
     top: auto !important;
     left: auto !important;
-    margin-bottom: 10px;
-    align-self: flex-start;
+    margin-bottom: 8px;
+    align-self: center;
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-game-container {
+    padding: 0.3rem;
+    gap: 0.8rem;
+    min-height: 70vh;
+  }
+  
+  .white-cards-section {
+    gap: 0.4rem;
+    padding: 5px 0;
+  }
+  
+  .round-instructions {
+    font-size: 0.85rem;
+  }
+  
+  .room-code-floating {
+    max-width: 260px;
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .card-game-container {
+    padding: 0.2rem;
+    gap: 0.6rem;
+  }
+  
+  .white-cards-section {
+    gap: 0.3rem;
+  }
+  
+  .round-instructions {
+    font-size: 0.8rem;
+  }
+  
+  .room-code-floating {
+    max-width: 240px;
   }
 }

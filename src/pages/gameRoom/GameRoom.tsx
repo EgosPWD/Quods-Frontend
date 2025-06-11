@@ -8,6 +8,7 @@ export default function GameRoom(): React.ReactNode {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 480);
   const [gameState, setGameState] = useState<'waiting' | 'playing' | 'completed'>('waiting');
   const [gameResults, setGameResults] = useState<{ round: number; blackCard: Card; whiteCard: Card; isCorrect?: boolean }[]>([]);
   const [tema, setTema] = useState<string>(""); 
@@ -15,6 +16,7 @@ export default function GameRoom(): React.ReactNode {
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 480);
     };
 
     window.addEventListener("resize", handleResize);
@@ -67,9 +69,9 @@ export default function GameRoom(): React.ReactNode {
       <header className="game-header">
         {tema && (
           <div className="game-theme" style={{ 
-            fontSize: isSmallScreen ? '14px' : '16px',
+            fontSize: isMobile ? '11px' : isSmallScreen ? '12px' : '16px',
             backgroundColor: '#f0f0f0', 
-            padding: '5px 10px', 
+            padding: isMobile ? '2px 6px' : isSmallScreen ? '3px 8px' : '5px 10px', 
             borderRadius: '4px',
             display: 'inline-block',
             margin: '5px 0'
@@ -89,25 +91,31 @@ export default function GameRoom(): React.ReactNode {
               backgroundColor: '#f8f9fa',
               border: '2px dashed #dee2e6',
               borderRadius: '8px',
-              padding: '20px',
-              margin: '20px auto',
+              padding: isMobile ? '12px' : isSmallScreen ? '15px' : '20px',
+              margin: isMobile ? '12px auto' : isSmallScreen ? '15px auto' : '20px auto',
               textAlign: 'center',
-              maxWidth: '400px'
+              maxWidth: isMobile ? '280px' : isSmallScreen ? '320px' : '400px',
+              width: '100%'
             }}>
-              <h3 style={{ margin: '0 0 10px 0', fontSize: '18px', color: '#495057' }}>
+              <h3 style={{ 
+                margin: '0 0 10px 0', 
+                fontSize: isMobile ? '14px' : isSmallScreen ? '16px' : '18px', 
+                color: '#495057' 
+              }}>
                 Código de Sala
               </h3>
               <div style={{
-                fontSize: '24px',
+                fontSize: isMobile ? '18px' : isSmallScreen ? '20px' : '24px',
                 fontWeight: 'bold',
                 color: '#212529',
                 backgroundColor: 'white',
-                padding: '10px 20px',
+                padding: isMobile ? '6px 12px' : isSmallScreen ? '8px 16px' : '10px 20px',
                 borderRadius: '4px',
                 border: '1px solid #dee2e6',
                 margin: '10px 0',
-                letterSpacing: '2px',
-                fontFamily: 'monospace'
+                letterSpacing: isMobile ? '0.5px' : isSmallScreen ? '1px' : '2px',
+                fontFamily: 'monospace',
+                wordBreak: 'break-all'
               }}>
                 {roomId}
               </div>
@@ -128,11 +136,12 @@ export default function GameRoom(): React.ReactNode {
                   backgroundColor: '#007bff',
                   color: 'white',
                   border: 'none',
-                  padding: '10px 20px',
+                  padding: isMobile ? '6px 12px' : isSmallScreen ? '8px 16px' : '10px 20px',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '16px',
-                  fontWeight: '500'
+                  fontSize: isMobile ? '12px' : isSmallScreen ? '14px' : '16px',
+                  fontWeight: '500',
+                  width: isSmallScreen ? '100%' : 'auto'
                 }}
               >
                 📋 Copiar Código
@@ -177,43 +186,83 @@ export default function GameRoom(): React.ReactNode {
               <div className="summary-stats" style={{ 
                 display: 'flex', 
                 justifyContent: 'center', 
-                gap: '20px',
+                gap: isMobile ? '8px' : isSmallScreen ? '10px' : '20px',
                 marginBottom: '20px',
-                padding: '15px',
+                padding: isMobile ? '8px' : isSmallScreen ? '10px' : '15px',
                 backgroundColor: '#f8f9fa',
-                borderRadius: '8px'
+                borderRadius: '8px',
+                flexWrap: 'wrap'
               }}>
-                <div className="stat" style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                <div className="stat" style={{ 
+                  textAlign: 'center',
+                  flex: isSmallScreen ? '1' : 'none',
+                  minWidth: isMobile ? '70px' : isSmallScreen ? '80px' : 'auto'
+                }}>
+                  <div style={{ 
+                    fontSize: isMobile ? '18px' : isSmallScreen ? '20px' : '24px', 
+                    fontWeight: 'bold' 
+                  }}>
                     {gameResults.length}
                   </div>
-                  <div style={{ fontSize: '14px', color: '#666' }}>Total de respuestas</div>
+                  <div style={{ 
+                    fontSize: isMobile ? '11px' : isSmallScreen ? '12px' : '14px', 
+                    color: '#666' 
+                  }}>
+                    Total de respuestas
+                  </div>
                 </div>
-                <div className="stat" style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#28a745' }}>
+                <div className="stat" style={{ 
+                  textAlign: 'center',
+                  flex: isSmallScreen ? '1' : 'none',
+                  minWidth: isMobile ? '70px' : isSmallScreen ? '80px' : 'auto'
+                }}>
+                  <div style={{ 
+                    fontSize: isMobile ? '18px' : isSmallScreen ? '20px' : '24px', 
+                    fontWeight: 'bold', 
+                    color: '#28a745' 
+                  }}>
                     {gameResults.filter(r => r.isCorrect === true).length}
                   </div>
-                  <div style={{ fontSize: '14px', color: '#666' }}>Correctas</div>
+                  <div style={{ 
+                    fontSize: isMobile ? '11px' : isSmallScreen ? '12px' : '14px', 
+                    color: '#666' 
+                  }}>
+                    Correctas
+                  </div>
                 </div>
-                <div className="stat" style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#dc3545' }}>
+                <div className="stat" style={{ 
+                  textAlign: 'center',
+                  flex: isSmallScreen ? '1' : 'none',
+                  minWidth: isMobile ? '70px' : isSmallScreen ? '80px' : 'auto'
+                }}>
+                  <div style={{ 
+                    fontSize: isMobile ? '18px' : isSmallScreen ? '20px' : '24px', 
+                    fontWeight: 'bold', 
+                    color: '#dc3545' 
+                  }}>
                     {gameResults.filter(r => r.isCorrect === false).length}
                   </div>
-                  <div style={{ fontSize: '14px', color: '#666' }}>Incorrectas</div>
+                  <div style={{ 
+                    fontSize: isMobile ? '11px' : isSmallScreen ? '12px' : '14px', 
+                    color: '#666' 
+                  }}>
+                    Incorrectas
+                  </div>
                 </div>
               </div>
               
               <div style={{ 
-                padding: '10px 15px', 
+                padding: isMobile ? '6px 10px' : isSmallScreen ? '8px 12px' : '10px 15px', 
                 backgroundColor: gameResults.filter(r => r.isCorrect === true).length > gameResults.filter(r => r.isCorrect === false).length ? '#d4edda' : '#f8d7da',
                 borderRadius: '4px',
-                marginBottom: '30px',
+                marginBottom: isMobile ? '15px' : isSmallScreen ? '20px' : '30px',
                 textAlign: 'center',
-                color: gameResults.filter(r => r.isCorrect === true).length > gameResults.filter(r => r.isCorrect === false).length ? '#155724' : '#721c24'
+                color: gameResults.filter(r => r.isCorrect === true).length > gameResults.filter(r => r.isCorrect === false).length ? '#155724' : '#721c24',
+                fontSize: isMobile ? '13px' : isSmallScreen ? '14px' : '16px'
               }}>
                 {gameResults.filter(r => r.isCorrect === true).length > gameResults.filter(r => r.isCorrect === false).length
-                  ? '¡Felicidades! Has tenido más respuestas correctas que incorrectas. 🎉'
-                  : 'Puedes mejorar. ¡Intenta nuevamente para conseguir más respuestas correctas! 💪'
+                  ? '¡Felicidades! Has tenido más respuestas correctas que incorrectas.'
+                  : 'Puedes mejorar. ¡Intenta nuevamente para conseguir más respuestas correctas!'
                 }
               </div>
             </div>

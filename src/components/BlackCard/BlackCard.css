@@ -17,3 +17,40 @@
   text-align: center;
   font-weight: 500;
 }
+
+/* Responsive styles for BlackCard */
+@media (max-width: 768px) {
+  .black-card {
+    width: 200px;
+    height: 280px;
+    padding: 0.8rem;
+  }
+  
+  .black-card-content {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .black-card {
+    width: 180px;
+    height: 240px;
+    padding: 0.7rem;
+  }
+  
+  .black-card-content {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .black-card {
+    width: 160px;
+    height: 220px;
+    padding: 0.6rem;
+  }
+  
+  .black-card-content {
+    font-size: 0.9rem;
+  }
+}

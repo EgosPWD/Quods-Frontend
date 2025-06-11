@@ -78,20 +78,6 @@
 /* Responsive styles para WhiteCard */
 @media (max-width: 768px) {
   .white-card {
-    min-width: 160px;
-    max-width: 180px;
-    width: 170px;
-    height: 220px;
-    padding: 0.8rem;
-  }
-  
-  .white-card-content {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .white-card {
     min-width: 140px;
     max-width: 160px;
     width: 150px;
@@ -102,9 +88,42 @@
   .white-card-content {
     font-size: 0.85rem;
   }
+}
+
+@media (max-width: 480px) {
+  .white-card {
+    min-width: 120px;
+    max-width: 140px;
+    width: 130px;
+    height: 180px;
+    padding: 0.6rem;
+  }
+  
+  .white-card-content {
+    font-size: 0.8rem;
+  }
   
   .selected-indicator {
     top: 5px;
     right: 5px;
+  }
+}
+
+@media (max-width: 360px) {
+  .white-card {
+    min-width: 110px;
+    max-width: 130px;
+    width: 120px;
+    height: 160px;
+    padding: 0.5rem;
+  }
+  
+  .white-card-content {
+    font-size: 0.75rem;
+  }
+  
+  .selected-indicator {
+    top: 3px;
+    right: 3px;
   }
 }
