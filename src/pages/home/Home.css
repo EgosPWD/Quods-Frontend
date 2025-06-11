@@ -628,24 +628,83 @@ html, body {
   animation: fadeIn 0.8s ease forwards;
 }
 
-/* Animaciones */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Existing rooms section styles */
+.existing-rooms {
+  text-align: center;
 }
 
-@keyframes fadeIn {
+.existing-rooms h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #111;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.existing-rooms h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 25%;
+  width: 50%;
+  height: 3px;
+  background: #4ECDC4;
+  border-radius: 4px;
+}
+
+.rooms-list {
+  margin-top: 20px;
+}
+
+.room-card {
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.room-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  border-color: #4ECDC4 !important;
+}
+
+.room-card:active {
+  transform: translateY(-1px) !important;
+}
+
+/* Room card animations */
+.room-card:nth-child(1) {
+  animation: slideInRight 0.6s ease forwards;
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.room-card:nth-child(2) {
+  animation: slideInRight 0.6s ease forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.room-card:nth-child(3) {
+  animation: slideInRight 0.6s ease forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.room-card:nth-child(4) {
+  animation: slideInRight 0.6s ease forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+@keyframes slideInRight {
   from {
     opacity: 0;
+    transform: translateX(50px);
   }
   to {
     opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -696,5 +755,31 @@ html, body {
   
   .subtitle {
     font-size: 0.9rem;
+  }
+}
+
+/* Responsive styles for existing rooms */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .content-left, .content-right {
+    flex: none;
+    padding: 30px;
+  }
+
+  .existing-rooms h2 {
+    font-size: 20px;
+  }
+
+  .room-card {
+    padding: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .room-card h3 {
+    font-size: 14px !important;
   }
 }

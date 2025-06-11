@@ -7,8 +7,6 @@ import "./Home.css";
 export default function Home(): React.ReactNode {
   const navigate = useNavigate();
   const [fadeIn, setFadeIn] = useState(false);
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const [howToPlayStep, setHowToPlayStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [customPrompt, setCustomPrompt] = useState("");
   const [gameMode, setGameMode] = useState<'create' | 'join'>('create');
@@ -68,38 +66,37 @@ export default function Home(): React.ReactNode {
     }
   };
 
-  const howToPlayContent = [
+  // Existing rooms data
+  const existingRooms = [
     {
-      title: "Crea una sala",
-      description: "Ingresa un tema para las cartas y comienza el juego",
-      icon: (
-        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z" fill="#4ECDC4" />
-        </svg>
-      )
+      id: "b38448ab-d492-40fc-9cd6-0f3c21026227",
+      name: "Python sintaxis básica",
+      theme: "python",
+      color: "#4ECDC4"
     },
     {
-      title: "Invita amigos",
-      description: "Comparte el enlace de la sala para que tus amigos se unan",
-      icon: (
-        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12C9 11.76 8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5C21 3.34 19.66 2 18 2C16.34 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12C3 13.66 4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.35C15.11 18.56 15.08 18.78 15.08 19C15.08 20.61 16.39 21.92 18 21.92C19.61 21.92 20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z" fill="#FF6B6B" />
-        </svg>
-      )
+      id: "4a8cf96b-6ccb-4663-8c36-e65c7bc43bae", 
+      name: "Sistema circulatorio",
+      theme: "biology",
+      color: "#FF6B6B"
     },
     {
-      title: "¡Juega y diviértete!",
-      description: "Completa frases con tus cartas y vota las más divertidas",
-      icon: (
-        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM15.5 11C16.33 11 17 10.33 17 9.5C17 8.67 16.33 8 15.5 8C14.67 8 14 8.67 14 9.5C14 10.33 14.67 11 15.5 11ZM8.5 11C9.33 11 10 10.33 10 9.5C10 8.67 9.33 8 8.5 8C7.67 8 7 8.67 7 9.5C7 10.33 7.67 11 8.5 11ZM12 17.5C14.33 17.5 16.31 16.04 17.11 14H6.89C7.69 16.04 9.67 17.5 12 17.5Z" fill="#FFE66D" />
-        </svg>
-      )
+      id: "71eff5d5-8aa3-4034-9e79-78b357a5a2e9",
+      name: "Sobre la primera guerra mundial fácil",
+      theme: "history", 
+      color: "#FFE66D"
+    },
+    {
+      id: "864a2ea2-ef9a-4fce-a745-61a2a45ef7ca",
+      name: "Sobre la sintaxis básica Java",
+      theme: "java",
+      color: "#A8E6CF"
     }
   ];
 
-  const nextStep = () => {
-    setHowToPlayStep((prev) => (prev + 1) % howToPlayContent.length);
+  const handleJoinExistingRoom = (roomId: string) => {
+    setIsLoading(true);
+    navigate(`/room/${roomId}`);
   };
 
   return (
@@ -259,34 +256,96 @@ export default function Home(): React.ReactNode {
         </div>
 
         <div className="content-right">
-          <div className="how-to-play">
-            <h2>CÓMO JUGAR</h2>
+          <div className="existing-rooms">
+            <h2>SALAS EXISTENTES</h2>
+            <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
+              Únete a una sala que ya está en curso
+            </p>
             
-            <div className="step">
-              <div className="step-icon">
-                {howToPlayContent[howToPlayStep].icon}
-              </div>
-              <h3>{howToPlayContent[howToPlayStep].title}</h3>
-              <p>{howToPlayContent[howToPlayStep].description}</p>
-            </div>
-            
-            <div className="pagination">
-              {howToPlayContent.map((_, index) => (
-                <div 
-                  key={index} 
-                  className={`dot ${index === howToPlayStep ? 'active' : ''}`} 
-                  onClick={() => setHowToPlayStep(index)}
-                />
+            <div className="rooms-list">
+              {existingRooms.map((room) => (
+                <div key={room.id} className="room-card" style={{
+                  background: 'white',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  marginBottom: '12px',
+                  border: '1px solid #e9ecef',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }} onClick={() => handleJoinExistingRoom(room.id)}>
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '4px',
+                    height: '100%',
+                    backgroundColor: room.color
+                  }}></div>
+                  
+                  <div style={{ marginLeft: '8px' }}>
+                    <h3 style={{ 
+                      fontSize: '16px', 
+                      margin: '0 0 8px 0',
+                      color: '#111',
+                      fontWeight: '600'
+                    }}>
+                      {room.name}
+                    </h3>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}>
+                      <span style={{
+                        fontSize: '12px',
+                        backgroundColor: room.color + '20',
+                        color: room.color,
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontWeight: '500'
+                      }}>
+                        {room.theme}
+                      </span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="#666" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
-            
-            <div className="buttonContainer" style={{ marginTop: '20px' }}>
-              <Buttons
-                variant="secondary"
-                onClick={nextStep}
+
+            <div style={{ 
+              textAlign: 'center', 
+              marginTop: '20px',
+              padding: '16px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '8px',
+              border: '1px dashed #dee2e6'
+            }}>
+              <p style={{ 
+                fontSize: '13px', 
+                color: '#666', 
+                margin: '0 0 8px 0' 
+              }}>
+                ¿No encuentras lo que buscas?
+              </p>
+              <button
+                onClick={() => setGameMode('create')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#4ECDC4',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  textDecoration: 'underline'
+                }}
               >
-                Siguiente
-              </Buttons>
+                Crea tu propia sala
+              </button>
             </div>
           </div>
         </div>
