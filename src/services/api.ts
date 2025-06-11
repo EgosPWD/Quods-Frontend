@@ -5,7 +5,7 @@ export interface UserResponse {
 }
 
 export async function createUser(name: string): Promise<UserResponse> {
-  const res = await fetch("http://localhost:8000/users", {
+  const res = await fetch("https://back.ego.quods.xyz/users", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name }),
@@ -21,7 +21,7 @@ export async function createUser(name: string): Promise<UserResponse> {
 }
 
 export async function createRoom(): Promise<string> {
-  const res = await fetch("http://localhost:8000/room/create");
+  const res = await fetch("https://back.ego.quods.xyz/room/create");
   if (!res.ok) throw new Error("No se pudo creaar la sala");
   const data = await res.json();
   console.log(data.room_id);
@@ -35,7 +35,7 @@ export interface Card {
 }
 
 export async function selectBlackCards(roomId: string): Promise<Card[]> {
-  const res = await fetch(`http://localhost:8000/black_cards-select?room_id=${roomId}`);
+  const res = await fetch(`https://back.ego.quods.xyz/black_cards-select?room_id=${roomId}`);
   if (!res.ok) throw new Error("No se pudo seleccionar las cartas negras");
   const data = await res.json();
 
@@ -47,7 +47,7 @@ export async function selectBlackCards(roomId: string): Promise<Card[]> {
 }
 
 export async function selectWhiteCards(roomId: string): Promise<Card[]> {
-  const res = await fetch(`http://localhost:8000/white_cards-select?room_id=${roomId}`);
+  const res = await fetch(`https://back.ego.quods.xyz/white_cards-select?room_id=${roomId}`);
   if (!res.ok) throw new Error("No se pudo seleccionar las cartas blancas");
   const data = await res.json();
 
@@ -59,7 +59,7 @@ export async function selectWhiteCards(roomId: string): Promise<Card[]> {
 }
 
 export async function selectOneWhiteCard(roomId: string): Promise<Card> {
-  const res = await fetch(`http://localhost:8000/white_cards-one?room_id=${roomId}`);
+  const res = await fetch(`https://back.ego.quods.xyz/white_cards-one?room_id=${roomId}`);
   if (!res.ok) throw new Error("No se pudo seleccionar la carta blanca");
   const data = await res.json();
 
@@ -83,7 +83,7 @@ interface GenerateCardsResponse {
 }
 
 export async function generateCards(request: GenerateCardsRequest): Promise<GenerateCardsResponse> {
-  const res = await fetch("http://localhost:8000/generar-cartas", {
+  const res = await fetch("https://back.ego.quods.xyz/generar-cartas", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
@@ -114,7 +114,7 @@ interface VerificarRespuestaResponse {
 }
 
 export async function verificarRespuesta(request: VerificarRespuestaRequest): Promise<VerificarRespuestaResponse> {
-  const res = await fetch("http://localhost:8000/verificar-respuesta", {
+  const res = await fetch("https://back.ego.quods.xyz/verificar-respuesta", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
@@ -149,7 +149,7 @@ interface CorrectCardsResponse {
 }
 
 export async function getCorrectCards(request: CorrectCardsRequest): Promise<CorrectCardsResponse> {
-  const res = await fetch("http://localhost:8000/correct-cards", {
+  const res = await fetch("https://back.ego.quods.xyz/correct-cards", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
